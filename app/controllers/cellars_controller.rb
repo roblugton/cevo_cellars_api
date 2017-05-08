@@ -7,6 +7,11 @@ class CellarsController < ApplicationController
         json_response(@cellars)
     end
 
+    # GET /cellars/:id
+    def show
+        json_response(@cellar)
+    end
+
     private
 
     def cellar_params
