@@ -12,11 +12,11 @@ class JsonWebToken
   end
 
   def self.decode(token)
-    #get payload - first indext in decorated Array
-    body= JWT.decode(token, HMAC_SECRET)[0]
+    #get payload - first index in decorated Array
+    body = JWT.decode(token, HMAC_SECRET)[0]
     HashWithIndifferentAccess.new body
 
-    #rescue from expiry exception
+  #rescue from expiry exception
   rescue JWT::ExpiredSignature, JWT::VerificationError => e
     # raise custom error to be handled by custom handler
     raise ExceptionHandler::ExpiredSignature, e.message
