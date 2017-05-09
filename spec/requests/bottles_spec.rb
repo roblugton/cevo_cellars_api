@@ -48,4 +48,82 @@ RSpec.describe 'Items API' do
     end
   end
 
+  # Test Suite for POST /cellars/:cellar_id/bottles
+  describe 'POST /cellar/:cellar_id/bottles' do
+    let(:valid_params) {
+      {
+        name: "Funky Wine",
+        varietal: "Orange",
+        winery: "Funky Winery",
+        vintage: 1980,
+        description: "A funky wine from Funky Winery"
+      }
+    }
+
+    context 'when request attributes are valid' do
+      before { post "/cellars/#{cellar_id}/bottles", params: valid_params}
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+    end
+
+    context 'when request attributes are invalid' do
+      before { post "/cellars/#{cellar_id}/bottles", params: {} }
+
+      it 'returns a status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a failure message' do
+        expect(response.body).to match(/Validation failed: Name can't be blank/)
+      end
+    end
+
+  end
+
+  # Test Suite for PUT /cellars/:cellar_id/bottles/:id
+  describe 'PUT /cellar/:cellar_id/bottles/:id' do
+    let(:updated_name) { "Super Serious Wine" }
+    let(:valid_params) { { name: updated_name } }
+
+    context 'when bottle exists' do
+      before { put "/cellars/#{cellar_id}/bottles/#{id}", params: valid_params }
+
+      it 'returns a status code 204' do
+        expect(response).to have_http_status(204)
+      end
+
+      it 'updates the item' do
+        updated_bottle = Bottle.find(id)
+        expect(updated_bottle.name).to match(/#{updated_name}/)
+      end
+    end
+
+    context 'when bottle does not exist' do
+
+    end
+  end
+
+  # Test Suite for DELETE /cellars/:cellar_id/bottles/:id
+  describe 'DELETE /cellar/:cellar_id/bottles/:id' do
+
+    context 'bottle exists' do
+      before { delete "/cellars/#{cellar_id}/bottles/#{id}" }
+
+      it 'returns http status code 204' do
+        expect(response).to have_http_status(204)
+      end
+    end
+
+    context 'bottle does not exist' do
+      before { delete "/cellars/#{cellar_id}/bottles/0" }
+
+      it 'returns http status code 404' do
+        expect(response).to have_http_status(404)
+      end
+
+    end
+  end
 end
