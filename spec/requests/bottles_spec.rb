@@ -52,11 +52,11 @@ RSpec.describe 'Items API' do
   describe 'POST /cellar/:cellar_id/bottles' do
     let(:valid_params) {
       {
-        name: "Funky Wine",
-        varietal: "Orange",
-        winery: "Funky Winery",
+        name: 'Funky Wine',
+        varietal: 'Orange',
+        winery: 'Funky Winery',
         vintage: 1980,
-        description: "A funky wine from Funky Winery"
+        description: 'A funky wine from Funky Winery'
       }
     }
 
@@ -87,9 +87,9 @@ RSpec.describe 'Items API' do
   describe 'PUT /cellar/:cellar_id/bottles/:id' do
     let(:updated_name) { "Super Serious Wine" }
     let(:valid_params) { { name: updated_name } }
+    before { put "/cellars/#{cellar_id}/bottles/#{id}", params: valid_params }
 
     context 'when bottle exists' do
-      before { put "/cellars/#{cellar_id}/bottles/#{id}", params: valid_params }
 
       it 'returns a status code 204' do
         expect(response).to have_http_status(204)
@@ -102,28 +102,32 @@ RSpec.describe 'Items API' do
     end
 
     context 'when bottle does not exist' do
+      let(:id) { 0 }
 
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
+      end
+
+      it 'returns a not found message' do
+        expect(response.body).to match(/Couldn't find Bottle/)
+      end
     end
   end
 
   # Test Suite for DELETE /cellars/:cellar_id/bottles/:id
   describe 'DELETE /cellar/:cellar_id/bottles/:id' do
-
     context 'bottle exists' do
       before { delete "/cellars/#{cellar_id}/bottles/#{id}" }
-
       it 'returns http status code 204' do
         expect(response).to have_http_status(204)
       end
     end
-
     context 'bottle does not exist' do
       before { delete "/cellars/#{cellar_id}/bottles/0" }
 
       it 'returns http status code 404' do
         expect(response).to have_http_status(404)
       end
-
     end
   end
 end

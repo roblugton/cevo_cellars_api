@@ -20,6 +20,7 @@ bundle/
 
 # RubyMine files
 /.idea
+rubymine/
 
 #Simplecov Reports
 coverage/
