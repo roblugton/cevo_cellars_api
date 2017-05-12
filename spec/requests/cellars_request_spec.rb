@@ -13,7 +13,6 @@ RSpec.describe 'Cellars API', type: :request do
     before { get '/cellars', params: {}, headers: headers }
 
     it 'returns cellars' do
-      puts "JSON: #{json}"
       expect(json).not_to be_empty
       expect(json.size).to eq(10)
     end
