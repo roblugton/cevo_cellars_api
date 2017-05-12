@@ -1,14 +1,16 @@
 require 'rails_helper'
 
-RSpec.describe 'Items API' do
+RSpec.describe 'Bottles API', type: :request do
+  let(:user) { create(:user) }
   let!(:cellar) { create(:cellar) }
-  let!(:bottles) { create_list(:bottle, 20, cellar_id: cellar.id)}
+  let!(:bottles) { create_list(:bottle, 20, cellar_id: cellar.id) }
   let(:cellar_id) { cellar.id }
   let(:id) { bottles.first.id }
+  let(:headers) { valid_headers }
 
   # Test Suite for GET /cellars/:cellar_id/bottles
   describe 'GET /cellars/:cellar_id/bottles' do
-    before { get "/cellars/#{cellar_id}/bottles" }
+    before { get "/cellars/#{cellar_id}/bottles", params: {}, headers: headers }
 
     context 'when cellar exists' do
       it 'returns status code 200' do
@@ -35,7 +37,7 @@ RSpec.describe 'Items API' do
 
   # Test Suite for GET /cellars/:cellar_id/bottles/:id
   describe 'GET /cellars/:cellar_id/bottles/:id' do
-    before { get "/cellars/#{cellar_id}/bottles/#{id}" }
+    before { get "/cellars/#{cellar_id}/bottles/#{id}", params: {}, headers: headers }
 
     context 'when cellar bottle exists' do
       it 'returns status code 200' do
@@ -49,7 +51,7 @@ RSpec.describe 'Items API' do
   end
 
   # Test Suite for POST /cellars/:cellar_id/bottles
-  describe 'POST /cellar/:cellar_id/bottles' do
+  describe 'POST /cellars/:cellar_id/bottles' do
     let(:valid_params) {
       {
         name: 'Funky Wine',
@@ -57,11 +59,11 @@ RSpec.describe 'Items API' do
         winery: 'Funky Winery',
         vintage: 1980,
         description: 'A funky wine from Funky Winery'
-      }
+      }.to_json
     }
 
     context 'when request attributes are valid' do
-      before { post "/cellars/#{cellar_id}/bottles", params: valid_params}
+      before { post "/cellars/#{cellar_id}/bottles", params: valid_params, headers: headers }
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
@@ -70,7 +72,7 @@ RSpec.describe 'Items API' do
     end
 
     context 'when request attributes are invalid' do
-      before { post "/cellars/#{cellar_id}/bottles", params: {} }
+      before { post "/cellars/#{cellar_id}/bottles", params: {}, headers: headers }
 
       it 'returns a status code 422' do
         expect(response).to have_http_status(422)
@@ -86,8 +88,8 @@ RSpec.describe 'Items API' do
   # Test Suite for PUT /cellars/:cellar_id/bottles/:id
   describe 'PUT /cellar/:cellar_id/bottles/:id' do
     let(:updated_name) { "Super Serious Wine" }
-    let(:valid_params) { { name: updated_name } }
-    before { put "/cellars/#{cellar_id}/bottles/#{id}", params: valid_params }
+    let(:valid_params) { { name: updated_name }.to_json }
+    before { put "/cellars/#{cellar_id}/bottles/#{id}", params: valid_params, headers: headers }
 
     context 'when bottle exists' do
 
@@ -117,13 +119,13 @@ RSpec.describe 'Items API' do
   # Test Suite for DELETE /cellars/:cellar_id/bottles/:id
   describe 'DELETE /cellar/:cellar_id/bottles/:id' do
     context 'bottle exists' do
-      before { delete "/cellars/#{cellar_id}/bottles/#{id}" }
+      before { delete "/cellars/#{cellar_id}/bottles/#{id}", params: {}, headers: headers }
       it 'returns http status code 204' do
         expect(response).to have_http_status(204)
       end
     end
     context 'bottle does not exist' do
-      before { delete "/cellars/#{cellar_id}/bottles/0" }
+      before { delete "/cellars/#{cellar_id}/bottles/0", params: {}, headers: headers }
 
       it 'returns http status code 404' do
         expect(response).to have_http_status(404)

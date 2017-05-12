@@ -2,16 +2,18 @@ require 'rails_helper'
 
 RSpec.describe 'Cellars API', type: :request do
   # initialise test data
-  let!(:cellars) {create_list(:cellar, 10)}
-  let(:cellar_id) {cellars.first.id}
-
+  let(:user) { create(:user) }
+  let!(:cellars) { create_list(:cellar, 10) }
+  let(:cellar_id) { cellars.first.id }
+  let(:headers) { valid_headers }
   # Test suite for GET /cellars
   describe 'GET /cellars' do
 
     # make HTTP get requests before each example
-    before {get '/cellars'}
+    before { get '/cellars', params: {}, headers: headers }
 
     it 'returns cellars' do
+      puts "JSON: #{json}"
       expect(json).not_to be_empty
       expect(json.size).to eq(10)
     end
@@ -23,11 +25,12 @@ RSpec.describe 'Cellars API', type: :request do
 
   # test suite for GET /cellars/:id
   describe 'GET /cellars/:id' do
-    before {get "/cellars/#{cellar_id}"}
+    before { get "/cellars/#{cellar_id}", params: {}, headers: headers }
 
     context 'when the record exists' do
 
       it 'returns the cellar' do
+
         expect(json).not_to be_empty
         expect(json['id']).to eq(cellar_id)
       end
@@ -52,10 +55,10 @@ RSpec.describe 'Cellars API', type: :request do
 
   # test suite for POST /cellars
   describe 'POST /cellars' do
-    let(:valid_attributes) {{name: "Cevo Cellar"}}
+    let(:valid_attributes) { { name: "Cevo Cellar" }.to_json }
 
     context 'when the request is valid' do
-      before { post '/cellars', params: valid_attributes}
+      before { post '/cellars', params: valid_attributes, headers: headers }
 
       it "creates a cellar" do
         expect(json['name']).to eq('Cevo Cellar')
@@ -67,7 +70,8 @@ RSpec.describe 'Cellars API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/cellars', params: { foo: "bar"}}
+      let(:valid_attributes) { { name: nil }.to_json }
+      before { post '/cellars', params: valid_attributes, headers: headers }
 
       it "returns a status code 422" do
         expect(response).to have_http_status(422)
@@ -81,10 +85,10 @@ RSpec.describe 'Cellars API', type: :request do
 
   # test suite for PUT /cellars/:id
   describe 'PUT /cellars/:id' do
-    let(:valid_attributes) { { Name: "Cevo Cellar"} }
+    let(:valid_attributes) { { Name: "Cevo Cellar"}.to_json }
 
     context 'when the record is valid' do
-      before { put "/cellars/#{cellar_id}", params: valid_attributes }
+      before { put "/cellars/#{cellar_id}", params: valid_attributes, headers: headers }
 
       it "updates the record" do
         expect(response.body).to be_empty
@@ -99,7 +103,7 @@ RSpec.describe 'Cellars API', type: :request do
 
   # test suite for DELETE /cellars/:id
   describe 'Delete /cellar/:id' do
-    before { delete "/cellars/#{cellar_id}"}
+    before { delete "/cellars/#{cellar_id}", params: {}, headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

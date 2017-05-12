@@ -27,6 +27,10 @@ class Message
     'Account could not be created'
   end
 
+  def self.account_already_exists
+    'Account already exists'
+  end
+
   def self.expired_token
     'Sorry, your token has expired. Please login to continue.'
   end

@@ -17,6 +17,9 @@ module ExceptionHandler
     rescue_from ActiveRecord::RecordNotFound do |ex|
       json_response({ message: ex.message }, :not_found)
     end
+    rescue_from ActiveRecord::RecordNotUnique do |ex|
+      json_response({message: Message.account_already_exists}, :unprocessable_entity)
+    end
   end
 
   private

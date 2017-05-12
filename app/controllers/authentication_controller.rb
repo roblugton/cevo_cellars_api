@@ -1,4 +1,6 @@
 class AuthenticationController < ApplicationController
+  # skip authentication when signing up
+  skip_before_action :authorize_request, only: :authenticate
   # return auth token once user is authenticated
 
   def authenticate

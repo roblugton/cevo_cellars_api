@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-
+  # skip authorization for user signup
+  skip_before_action :authorize_request, only: :create
   def create
-    if user_exists
     user = User.create!(user_params)
     auth_token = AuthenticateUser.new(user.email, user.password).call
     response = { message: Message.account_created, auth_token: auth_token }
@@ -9,10 +9,6 @@ class UsersController < ApplicationController
   end
 
   private
-
-  def user_exists?
-    User.exists?(:email => user_params['email'])
-  end
 
   def user_params
     params.permit(:name, :email, :password, :password_confirmation)
