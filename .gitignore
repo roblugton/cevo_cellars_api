@@ -24,3 +24,4 @@ rubymine/
 
 #Simplecov Reports
 coverage/
+/.env
